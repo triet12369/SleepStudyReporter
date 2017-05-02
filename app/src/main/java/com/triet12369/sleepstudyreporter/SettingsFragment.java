@@ -1,21 +1,13 @@
-package com.triet12369.heartratemonitor;
+package com.triet12369.sleepstudyreporter;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-
-import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceGroup;
-import android.text.InputType;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-
 
 
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener{

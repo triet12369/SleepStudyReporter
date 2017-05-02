@@ -1,11 +1,7 @@
-package com.triet12369.heartratemonitor;
+package com.triet12369.sleepstudyreporter;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 public class AboutActivity extends AppCompatActivity {
 

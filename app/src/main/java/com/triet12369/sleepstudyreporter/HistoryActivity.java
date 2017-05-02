@@ -1,10 +1,8 @@
-package com.triet12369.heartratemonitor;
+package com.triet12369.sleepstudyreporter;
 
-import android.app.Activity;
 import android.content.Context;
-import android.provider.ContactsContract;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -14,7 +12,6 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.DataPointInterface;
-import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.OnDataPointTapListener;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 import com.jjoe64.graphview.series.Series;
@@ -29,17 +26,11 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import static android.R.attr.button;
-import static android.R.attr.dashGap;
-import static android.R.attr.data;
-import static android.R.attr.format;
 
 public class HistoryActivity extends AppCompatActivity{
     private static final String TAG = "HistoryActivity";

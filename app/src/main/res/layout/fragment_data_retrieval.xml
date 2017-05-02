@@ -1,0 +1,70 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context="com.triet12369.sleepstudyreporter.DataRetrievalFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/text_debug"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="36sp"
+            android:text="test"/>
+
+        <!--<TextView-->
+            <!--android:id="@+id/text_debug2"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:gravity="center"-->
+            <!--android:textSize="24sp"-->
+            <!--android:text="test"/>-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/buttonConnect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Button" />
+
+            <Button
+                android:id="@+id/buttonViewFiles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Button" />
+
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/lvfiles"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginTop="12dp"
+            android:layout_weight="1"
+            android:background="@drawable/listview_border"
+            android:paddingBottom="12dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+
+            android:paddingTop="12dp" />
+
+    </LinearLayout>
+
+</ScrollView>

@@ -1,19 +1,15 @@
-package com.triet12369.heartratemonitor;
+package com.triet12369.sleepstudyreporter;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +20,11 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GridLabelRenderer;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -31,24 +32,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.lang.reflect.Array;
-import java.sql.BatchUpdateException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GridLabelRenderer;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 
 
 

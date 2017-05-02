@@ -1,4 +1,4 @@
-package com.triet12369.heartratemonitor;
+package com.triet12369.sleepstudyreporter;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -7,9 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
-import org.w3c.dom.ProcessingInstruction;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
