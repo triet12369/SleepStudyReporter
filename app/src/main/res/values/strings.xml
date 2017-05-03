@@ -20,6 +20,8 @@
     <string name="title_list_preference">Detection method</string>
     <string name="dialog_title_list_preference"> </string>
     <string name="current_method">Current method: %1$s</string>
+    <string name="standby">Standby</string>
+    <string name="calculating">Calculating</string>
 
     <string name="title_activity_generate_report">GenerateReportActivity</string>
 

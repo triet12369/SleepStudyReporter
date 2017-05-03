@@ -15,8 +15,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.opencsv.CSVReader;
@@ -44,6 +46,9 @@ public class GenerateReportActivity extends AppCompatActivity {
     private Handler mHandler = new Handler();
     private ProgressDialog progress;
     private boolean taskFinish = false;
+
+    TextView textMaxHr, textMaxHrVal, textMaxSp, textMaxSpVal,
+            textMinHr, textMinHrVal, textMinSp, textMinSpVal;
 
 
     @Override
@@ -75,11 +80,23 @@ public class GenerateReportActivity extends AppCompatActivity {
                 // result of the request.
             }
         }
+        ///////////////////////////////////////////////////////////////////////////
+        //Initialize texts
+        textMaxHr = (TextView) findViewById(R.id.textMaxHr);
+        textMaxHrVal = (TextView) findViewById(R.id.textMaxHrVal);
+        textMaxSp = (TextView) findViewById(R.id.textMaxSp);
+        textMaxSpVal = (TextView) findViewById(R.id.textMaxSpVal);
+        textMinHr = (TextView) findViewById(R.id.textMinHr);
+        textMinHrVal = (TextView) findViewById(R.id.textMinHrVal);
+        textMinSp = (TextView) findViewById(R.id.textMinSp);
+        textMinSpVal = (TextView) findViewById(R.id.textMinSpVal);
+        ///////////////////////////////////////////////////////////////////////////
 
         new readFromFilesTask().execute();
         mHandler = new Handler() {
             public void handleMessage(Message msg) {
                 if (msg.what == 0) {
+                    //Graphview
                     GraphView graph = (GraphView) findViewById(R.id.graph_report);
                     mSeries = new LineGraphSeries<>(dataParser(0));
                     mSeries2 = new LineGraphSeries<>(dataParser(1));
@@ -92,8 +109,14 @@ public class GenerateReportActivity extends AppCompatActivity {
                     graph.getViewport().setYAxisBoundsManual(true);
                     graph.getViewport().setMinY(0);
                     graph.getViewport().setMaxY(120);
+                    mSeries.setTitle("Heart Rate");
+                    mSeries2.setTitle("SpO2");
+                    graph.getLegendRenderer().setVisible(true);
+                    graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
                     mSeries.setColor(Color.RED);
                     mSeries2.setColor(Color.GREEN);
+                    ////////////////////////////////////////
+                    new dataProcessing().execute();
                 }
             }
         };
@@ -187,6 +210,36 @@ public class GenerateReportActivity extends AppCompatActivity {
                     ee.printStackTrace();
                 }
             }
+            return null;
+        }
+    }
+    private class dataProcessing extends AsyncTask<Void, Void, Void> {
+        int[] minMaxHr, minMaxSp = {0,0};
+        @Override
+        protected void onProgressUpdate(Void... progress) {
+
+        }
+        @Override
+        protected void onPreExecute() {
+            textMaxHrVal.setText(R.string.calculating);
+            textMaxSpVal.setText(R.string.calculating);
+            textMinHrVal.setText(R.string.calculating);
+            textMinSpVal.setText(R.string.calculating);
+        }
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            textMaxHrVal.setText(Integer.toString(minMaxHr[0]));
+            textMaxSpVal.setText(Integer.toString(minMaxSp[0]) + '%');
+            textMinHrVal.setText(Integer.toString(minMaxHr[1]));
+            textMinSpVal.setText(Integer.toString(minMaxSp[1]) + '%');
+        }
+        @Override
+        protected Void doInBackground(Void... params) {
+            SignalProcessingModule processing = new SignalProcessingModule(data);
+            processing.initialize();
+            minMaxHr = processing.getMinMaxHr();
+            minMaxSp = processing.getMinMaxSp();
             return null;
         }
     }
