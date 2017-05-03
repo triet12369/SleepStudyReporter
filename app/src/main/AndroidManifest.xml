@@ -40,16 +40,7 @@
                 android:value="com.triet12369.sleepstudyreporter.MainActivity" />
         </activity>
         <activity android:name=".HistoryActivity" />
-        <activity
-            android:name=".GenerateReportActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_generate_report"
-            android:parentActivityName=".AboutActivity"
-            android:theme="@style/FullscreenTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.triet12369.sleepstudyreporter.AboutActivity" />
-        </activity>
+        <activity android:name=".GenerateReportActivity"></activity>
     </application>
 
 </manifest>

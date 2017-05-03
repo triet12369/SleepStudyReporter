@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -455,13 +456,15 @@ public class DataRetrievalFragment extends Fragment implements View.OnClickListe
             }
         }
     }
-    private void generateReportForm(String filename){
+    private void generateReportForm(final String filename){
         new AlertDialog.Builder(getActivity())
                 .setTitle("Generate report")
                 .setMessage("Are you sure you want to generate report for "+ filename + "?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-
+                        Intent intentGenerateReport = new Intent(getActivity(), GenerateReportActivity.class);
+                        GenerateReportActivity.filename = filename;
+                        startActivity(intentGenerateReport);
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
