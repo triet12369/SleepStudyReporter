@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class GenerateReportActivity extends AppCompatActivity {
@@ -47,8 +48,10 @@ public class GenerateReportActivity extends AppCompatActivity {
     private ProgressDialog progress;
     private boolean taskFinish = false;
 
-    TextView textMaxHr, textMaxHrVal, textMaxSp, textMaxSpVal,
-            textMinHr, textMinHrVal, textMinSp, textMinSpVal;
+    TextView    textMaxHr, textMaxHrVal, textMaxSp, textMaxSpVal,
+                textAvgHr, textAvgHrVal, textAvgSp, textAvgSpVal,
+                textMinHr, textMinHrVal, textMinSp, textMinSpVal,
+                textNumDipsSp, textNumDipsSpVal;
 
 
     @Override
@@ -90,6 +93,12 @@ public class GenerateReportActivity extends AppCompatActivity {
         textMinHrVal = (TextView) findViewById(R.id.textMinHrVal);
         textMinSp = (TextView) findViewById(R.id.textMinSp);
         textMinSpVal = (TextView) findViewById(R.id.textMinSpVal);
+        textAvgHr = (TextView) findViewById(R.id.textAvgHr);
+        textAvgHrVal = (TextView) findViewById(R.id.textAvgHrVal);
+        textAvgSp = (TextView) findViewById(R.id.textAvgSp);
+        textAvgSpVal = (TextView) findViewById(R.id.textAvgSpVal);
+        textNumDipsSp = (TextView) findViewById(R.id.textNumDipsSp);
+        textNumDipsSpVal = (TextView) findViewById(R.id.textNumDipsSpVal);
         ///////////////////////////////////////////////////////////////////////////
 
         new readFromFilesTask().execute();
@@ -213,18 +222,19 @@ public class GenerateReportActivity extends AppCompatActivity {
             return null;
         }
     }
-    private class dataProcessing extends AsyncTask<Void, Void, Void> {
+    private class dataProcessing extends AsyncTask<Void, String, Void> {
         int[] minMaxHr, minMaxSp = {0,0};
+        int dips;
+        double[] avg = new double[2];
         @Override
-        protected void onProgressUpdate(Void... progress) {
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            progress.setMessage(Arrays.toString(values));
 
         }
         @Override
         protected void onPreExecute() {
-            textMaxHrVal.setText(R.string.calculating);
-            textMaxSpVal.setText(R.string.calculating);
-            textMinHrVal.setText(R.string.calculating);
-            textMinSpVal.setText(R.string.calculating);
+            progress = ProgressDialog.show(GenerateReportActivity.this, "", "Processing...", true);
         }
         @Override
         protected void onPostExecute(Void result) {
@@ -233,13 +243,23 @@ public class GenerateReportActivity extends AppCompatActivity {
             textMaxSpVal.setText(Integer.toString(minMaxSp[0]) + '%');
             textMinHrVal.setText(Integer.toString(minMaxHr[1]));
             textMinSpVal.setText(Integer.toString(minMaxSp[1]) + '%');
+            textAvgHrVal.setText(String.format(Locale.ENGLISH, "%1$.2f", avg[0]));
+            textAvgSpVal.setText(String.format(Locale.ENGLISH, "%1$.2f", avg[1]) + '%');
+            textNumDipsSpVal.setText(Integer.toString(dips));
+            progress.dismiss();
         }
         @Override
         protected Void doInBackground(Void... params) {
             SignalProcessingModule processing = new SignalProcessingModule(data);
+            publishProgress("Processing...Initializing");
             processing.initialize();
+            publishProgress("Processing...Heart rate");
             minMaxHr = processing.getMinMaxHr();
+            publishProgress("Processing...SpO2");
             minMaxSp = processing.getMinMaxSp();
+            dips = processing.getNumberOfDips(1);
+            publishProgress("Processing...Averages");
+            avg = processing.getAverage();
             return null;
         }
     }

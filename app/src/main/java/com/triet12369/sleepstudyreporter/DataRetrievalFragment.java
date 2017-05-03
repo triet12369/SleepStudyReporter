@@ -187,7 +187,7 @@ public class DataRetrievalFragment extends Fragment implements View.OnClickListe
                 int check = 0;
                 Date date = Calendar.getInstance().getTime();
                 DateFormat formatter = new SimpleDateFormat("d_MMM-hh_mm_ss");
-                String filename = formatter.format(date) + ".csv";
+                final String filename = formatter.format(date) + ".csv";
                 //read data from recDataString
                     for (int i=0; i < recDataString.length(); i++) {
                         if (recDataString.charAt(i) == '[') {
@@ -215,6 +215,7 @@ public class DataRetrievalFragment extends Fragment implements View.OnClickListe
                     @Override
                     public void run() {
                         progress.dismiss();
+                        generateReportForm(filename);
                     }
                 });
                 handlerControl = 0;
