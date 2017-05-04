@@ -106,6 +106,7 @@ public class DataRetrievalFragment extends Fragment implements View.OnClickListe
         buttonViewFiles = (Button) getView().findViewById(R.id.buttonViewFiles);
         buttonViewFiles.setText("Refresh");
         buttonConnect.setOnClickListener(this);
+        buttonViewFiles.setOnClickListener(this);
 
 
         listfiles = (ListView) getView().findViewById(R.id.lvfiles);
