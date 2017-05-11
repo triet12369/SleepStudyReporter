@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -190,28 +191,28 @@ public class DataRetrievalFragment extends Fragment implements View.OnClickListe
                 DateFormat formatter = new SimpleDateFormat("d_MMM-hh_mm_ss");
                 final String filename = formatter.format(date) + ".csv";
                 //read data from recDataString
-                    for (int i=0; i < recDataString.length(); i++) {
-                        if (recDataString.charAt(i) == '[') {
-                            check = 1;
-                        }
-                        if (recDataString.charAt(i) == ']' && check == 1) {
-                            check = 0;
-                            pattern = Pattern.compile(Pattern.quote("#"));
-                            data = pattern.split(temp);
-                            writeToFile(filename, data);
+                for (int i=0; i < recDataString.length(); i++) {
+                    if (recDataString.charAt(i) == '[') {
+                        check = 1;
+                    }
+                    if (recDataString.charAt(i) == ']' && check == 1) {
+                        check = 0;
+                        pattern = Pattern.compile(Pattern.quote("#"));
+                        data = pattern.split(temp);
+                        writeToFile(filename, data);
 //                            getActivity().runOnUiThread(new Runnable() {
 //                                @Override
 //                                public void run() {
 //                                    text_debug2.setText(Arrays.toString(data));
 //                                }
 //                            });
-                            temp.delete(0, temp.length());
-                        }
-                        if (check == 1 && recDataString.charAt(i) != '[') {
-                            temp.append(recDataString.charAt(i));
-                        }
+                        temp.delete(0, temp.length());
                     }
-                    recDataString.delete(0, recDataString.length());
+                    if (check == 1 && recDataString.charAt(i) != '[') {
+                        temp.append(recDataString.charAt(i));
+                    }
+                }
+                recDataString.delete(0, recDataString.length());
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -237,25 +238,9 @@ public class DataRetrievalFragment extends Fragment implements View.OnClickListe
             }
         }; mHandler.postDelayed(dataRecListener, 100);
 
-        //list view functions
-        File root = android.os.Environment.getExternalStorageDirectory();
-        File dir = new File(root.getAbsolutePath() + "/SleepStudy-retrieved");
-        File[] filelist = dir.listFiles();
-        Arrays.sort(filelist);
-        ArrayList<String> theNamesOfFiles = new ArrayList<String>();
-        for (int i = 0; i < filelist.length; i++) {
-            theNamesOfFiles.add(filelist[i].getName());        }
-
-        final StableArrayAdapter adapter = new StableArrayAdapter(getActivity(), R.layout.listfiles_adapter_view, theNamesOfFiles);
-        listfiles.setAdapter(adapter);
-        listfiles.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(), adapter.getItem(position), Toast.LENGTH_SHORT).show();
-                generateReportForm(adapter.getItem(position));
-            }
-        });
-
+//        Boolean isSDPresent = android.os.Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+//        Log.d(TAG, "SD status: " + isSDPresent);
+        updateListFiles();
     }
     private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
         return device.createRfcommSocketToServiceRecord(BTMODULEUUID);
@@ -475,6 +460,30 @@ public class DataRetrievalFragment extends Fragment implements View.OnClickListe
                     }
                 })
                 .show();
+    }
+    private void updateListFiles () {
+        //list view functions
+        File root = android.os.Environment.getExternalStorageDirectory();
+        File dir = new File(root.getAbsolutePath() + "/SleepStudy-retrieved");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        Log.d(TAG, "dir = " + dir);
+        File[] filelist = dir.listFiles();
+        Arrays.sort(filelist);
+        ArrayList<String> theNamesOfFiles = new ArrayList<String>();
+        for (int i = 0; i < filelist.length; i++) {
+            theNamesOfFiles.add(filelist[i].getName());        }
+
+        final StableArrayAdapter adapter = new StableArrayAdapter(getActivity(), R.layout.listfiles_adapter_view, theNamesOfFiles);
+        listfiles.setAdapter(adapter);
+        listfiles.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Toast.makeText(getActivity(), adapter.getItem(position), Toast.LENGTH_SHORT).show();
+                generateReportForm(adapter.getItem(position));
+            }
+        });
     }
 }
 
