@@ -3,9 +3,11 @@ package com.triet12369.sleepstudyreporter;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
 
 /**
  * Created by Triet on 5/3/2017.
@@ -14,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class SignalProcessingModule {
     private static final String TAG = "SignalProcessing";
     private ArrayList<String[]> data = new ArrayList<String[]>();
+    private boolean isDemo;
     public int DISCARD_BOTH_ENDS = 5;
     private int THRESHOLD_SP = 90, THRESHOLD_HR = 50;
     private int startIndex, endIndex;
@@ -46,11 +49,13 @@ public class SignalProcessingModule {
     private static double[][] b1 = {{-1.3654},{-1.2043},{0.81745},{0.44637},{0.21212},{0.22037},{-0.26142},{-0.82848},{1.0571},{1.3883}};
     private static double[][] b2 = {{-1.1032},{1.5354}};
 
-    public SignalProcessingModule(ArrayList<String[]> in_data) {
+    public SignalProcessingModule(ArrayList<String[]> in_data, boolean test) {
         data = in_data;
+        isDemo = test;
     }
     ////Initialize indexes
     public void initialize() {
+        Log.d(TAG, String.valueOf(isDemo));
         hrArray.clear();
         spArray.clear();
         if (DISCARD_BOTH_ENDS != 0) {
@@ -123,5 +128,131 @@ public class SignalProcessingModule {
         return ((double) sum) / n;
     }
 
+    public double demo() {
+        double[][] sigInput = new double[150][700];
+        double[][] sig,ira,iri;
+        double ahi;
+        sig = reshape(parseArray(0), 50, 700);
+        ira = reshape(parseArray(1), 50, 700);
+        iri = reshape(parseArray(2), 50, 700);
+        for (int i = 0; i<50; i++) {
+            for (int k = 0; k<700; k++){
+                sigInput[i][k] = ira[i][k];
+            }
+        }
+        for (int i = 50; i<100; i++) {
+            for (int k = 0; k<700; k++){
+                sigInput[i][k] = iri[i-50][k];
+            }
+        }
+        for (int i = 100; i<150; i++) {
+            for (int k = 0; k<700; k++){
+                sigInput[i][k] = sig[i-100][k];
+            }
+        }
+        ahi = feedfoward(sigInput);
+        Log.d(TAG, String.valueOf(ahi));
+        return ahi;
+    }
+    private double[][] parseArray(int index) {
+        int size = data.size();
+        //Log.d(TAG, "data.size = " + size);
+        double[][] tempArray = new double[size][1];
+        for (int i = 0; i<data.size();i++) {
+            tempArray[i][0] = Double.parseDouble(data.get(i)[index]);
+        }
+        return tempArray;
+    }
+    public static double[][] reshape(double[][] A, int m, int n) {
+        int origM = A.length;
+        int origN = A[0].length;
+        if(origM*origN != m*n){
+            throw new IllegalArgumentException("New matrix must be of same area as matix A");
+        }
+        double[][] B = new double[m][n];
+        double[] A1D = new double[A.length * A[0].length];
 
+        int index = 0;
+        for(int i = 0;i<A.length;i++){
+            for(int j = 0;j<A[0].length;j++){
+                A1D[index++] = A[i][j];
+            }
+        }
+
+        index = 0;
+        for(int i = 0;i<n;i++){
+            for(int j = 0;j<m;j++){
+                B[j][i] = A1D[index++];
+            }
+
+        }
+        return B;
+    }
+    private double feedfoward(double[][] sigInput) {
+        double[][] output = new double [2][700];
+        double[] xmax = new double[150];
+        double[] xmin = new double[150];
+        double[] input = new double[150];
+        for (int m = 0; m < 700; m++) {
+            for (int l = 0; l < 150; l++){
+                input[l] = sigInput[l][m];
+            }
+            double[][] L1 = new double[10][150];
+            for (int i = 0; i < 150; i++){
+                xmax[i] = max(sigInput[i]);
+                xmin[i] = min(sigInput[i]);
+                input[i] = 2*(input[i]-xmin[i])/(xmax[i] - xmin[i]) - 1;
+                for (int k = 0; k < 10; k++){
+                    L1[k][i] = input[i] * IW[k][i];
+                }
+            }
+            double[] L1a = new double[10];
+            for (int i = 0; i < 10; i++) {
+                L1a[i] = 2/(1 + Math.exp(-2*sum(L1[i]) + b1[i][0])) - 1;
+            }
+            double[][] L2 = new double[2][10];
+            for (int i = 0; i < 10; i++) {
+                for (int k = 0; k < 2; k++) {
+                    L2[k][i] = L1a[i] * LW[k][i];
+                }
+            }
+            output[0][m] = sum(L2[0]) + b2[0][0];
+            output[1][m] = sum(L2[1]) + b2[1][0];
+            for (int i = 0; i < 2; i++){
+                output[i][m] = Math.round((output[i][m] + 1)/2);
+                if (output[i][m] > 1){
+                    output[i][m] = 1;
+                } else if (output[i][m] < 0){
+                    output[i][m] = 0;
+                }
+            }
+        }
+        //Log.d(TAG, "output: " + output[0][0] + output[1][0]);
+        return sum(output[1])/(5+5/6.0);
+    }
+    private double max(double[] array) {
+        double max = array[0];
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] > max) {
+                max = array[i];
+            }
+        }
+        return max;
+    }
+    private double min(double[] array) {
+        double min = array[0];
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] < min) {
+                min = array[i];
+            }
+        }
+        return min;
+    }
+    private double sum(double[] array){
+        double sum = 0;
+        for (int i = 0; i < array.length; i++){
+            sum += array[i];
+        }
+        return sum;
+    }
 }
